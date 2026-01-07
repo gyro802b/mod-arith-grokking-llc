@@ -4,7 +4,12 @@ An exploratory project for estimating the Local Learning Coefficient (LLC) acros
 
 First ever DevInterp project! Exploratory project investigating LLC dynamics during grokking of different model types
 
-Pretty rough, but was timeboxed as a learning exercise; future work should extend ablations, test on more seeds, and improve SGLD hyperparameter tuning.
+Pretty rough, but was timeboxed as a learning exercise; future work should extend ablations, test on more seeds, collect more data, and improve SGLD hyperparameter tuning.
+
+### Notebooks
+
+- [Main LLC inspection](Modular_Arithmetic_Grokking_LLC_inspection.ipynb)
+- [Additional Ablations](Modular_Arithmetic_Grokking_Ablations.ipynb)
 
 ### Background
 
@@ -15,6 +20,15 @@ Pretty rough, but was timeboxed as a learning exercise; future work should exten
 In this notebook we investigate how the local learning coefficient (LLC) evolves after grokking modular arithmetic for different architectures (Transformer, MLP, Const Attention).
 
 The authors of https://arxiv.org/pdf/2306.17844 have found that models can learn different algorithms to perform modular arithmetic, and it is an open question on how the LLC is impacted by them.
+
+### Scope
+3 models are trained to perform modular arithmetic: The models are specifically trained to learn the operation `(a+b) % p`, where `a,b` are inputs, and `p` is fixed (in this notebook, `p=59`)
+
+1. A single layer transformer with learned positional encodings and constant attention. Corresponds to `ModelA` in Pizza/Clock.
+2. A single layer transformer with learned positional encodings. Corresponds to `ModelB` in Pizza/Clock.
+3. A single layer MLP.
+
+Main notebook performs a single training run of each with a fixed seed for reproducability. Ablations use separate seeds and hyperparamters.
 
 ### Observations
 
@@ -34,15 +48,6 @@ ModelA and ModelB learn different algorithms, and in both, LLC drops sharply dur
 - When trained long enough, the Transformer and Const Attn models appear to undergo a second phase change, post-grokking, where the LLC rises. Both models final LLCs were similar at approximately 115 and 117; 
 - For transformer models the LLC decreased if we lowered parameter count or disabled positional encoding. Between similarly sized constAttn vs regular transformer, LLC variance seems low.
 - MLP was likely overtrained, and hyperparameter selection for SGLD could be improved. My LLC estimate on the MLP model is near 0, which is a strange result. (The [reference](https://github.com/timaeus-research/devinterp/blob/main/examples/grokking.ipynb) finds it is closer to 23, under more grounded training conditions).
-
-#### Model Structures
-
-3 models are trained to perform modular arithmetic: The models are specifically trained to learn the operation `(a+b) % p`, where `a,b` are inputs, and `p` is fixed (in this notebook, `p=59`)
-
-1. A single layer transformer with learned positional encodings and constant attention. Corresponds to `ModelA` in Pizza/Clock.
-2. A single layer transformer with learned positional encodings. Corresponds to `ModelB` in Pizza/Clock.
-3. A single layer MLP.
-
 
 #### The Local Learning Coefficient (LLC)
 
