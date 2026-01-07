@@ -6,13 +6,13 @@ A technical exploration applying Local Learning Coefficient (LLC) estimation to 
 
 This is a **learning project** exploring the intersection of Singular Learning Theory and neural network generalization. I implemented LLC estimation using the [devinterp](https://github.com/timaeus-research/devinterp) library and replicated the architectural setup from [The Clock and the Pizza](https://arxiv.org/abs/2306.17844) paper.
 
-**Scope**: Single-seed exploration with one run per architecture. This is not a rigorous study and the goal was to build implementation familiarity and intuition for these techniques. As a learning project this was timeboxed and compute boxed to my T4 Colab credits.
+**Scope**: Single-seed exploration with one run per architecture. This is not a rigorous study, the goal was to build implementation familiarity and intuition for these techniques. As a learning project this was timeboxed and compute-boxed to my T4 Colab credits.
 
 ## Background
 
 **Grokking** is a phenomenon where neural networks suddenly generalize long after memorizing training data. [Power et al. (2022)](https://arxiv.org/abs/2201.02177) first observed this on modular arithmetic tasks.
 
-**The Local Learning Coefficient (LLC)** from Singular Learning Theory provides a geometry aware measure of model complexity. Unlike parameter counts, LLC captures the effective dimensionality of the loss landscape near a solution. See [Lau et al. (2023)](https://arxiv.org/abs/2308.12108) for the formal treatment.
+**The Local Learning Coefficient (LLC)** from Singular Learning Theory provides a geometry-aware measure of model complexity. Unlike parameter counts, LLC captures the effective dimensionality of the loss landscape near a solution. See [Lau et al. (2023)](https://arxiv.org/abs/2308.12108) for the formal treatment.
 
 **Clock vs Pizza**: [Zhong et al. (2023)](https://arxiv.org/abs/2306.17844) showed that different architectures learn different algorithms for modular addition. Transformers tend to learn "Clock" (Fourier-based) while MLPs learn "Pizza" (slice-based) algorithms, distinguishable via gradient symmetry and distance irrelevance metrics.
 
@@ -29,7 +29,7 @@ This is a **learning project** exploring the intersection of Singular Learning T
   - Gradient Symmetry
   - Distance Irrelevance
 
-- **Training infrastructure**: Checkpointing, metric logging, visualization
+- **Training infrastructure**: Base models, LLC estimation, ablations, visualization
 
 ## Repository Structure
 
@@ -56,7 +56,7 @@ The algorithm metrics (gradient symmetry, distance irrelevance) do differentiate
 pip install devinterp torch matplotlib pandas tqdm
 ```
 
-Open in [Google Colab](https://colab.research.google.com/github/gyro802b/mod-arith-grokking-llc/blob/main/Modular_Arithmetic_Grokking_LLC_inspection.ipynb) and run all cells. Full training + LLC estimation takes a few hours minutes on a T4 (~45 minutes per model)
+Open in [Google Colab](https://colab.research.google.com/github/gyro802b/mod-arith-grokking-llc/blob/main/Modular_Arithmetic_Grokking_LLC_inspection.ipynb) and run all cells. Full training + LLC estimation takes a few hours on a T4 (~45 minutes per model)
 
 ## Experiment Configuration
 
@@ -82,11 +82,11 @@ Parameters follow the Pizza/Clock paper where applicable.
 - **No determinism guarantees**: DataLoader shuffling and CUDA operations introduce non-determinism across environments. This is less of a problem when performing full-batch training, but for batch size ablations this is a known issue.
 - **LLC estimation variance**: SGLD-based estimation has inherent noise; more chains/draws would improve reliability.
 
-## What I Would Do With More Compute
+## What Could Be Done With More Compute & Time
 
 1. Run 5 seeds per architecture with error bars on all metrics
 2. Sweep LLC estimation hyperparameters (gamma, learning rate, num_draws)
-3. Add positional encoding ablations to isolate Clock/Pizza algorithm emergence
+3. Add more algorithm metrics from Clock/Pizza paper (attention patterns, PCAs)
 4. Track LLC evolution at finer granularity around the grokking transition
 
 ## References
