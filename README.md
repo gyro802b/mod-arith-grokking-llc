@@ -1,2 +1,46 @@
 # mod-arith-grokking-llc
 Estimating the Local Learning Coefficient (LLC) across various toy models of modular arithmetic, which learn different algorithms.
+
+First ever DevInterp project! It's pretty rough around the edges, would need a lot of ironing out to be a serious experiment. There's a lot left unfinished but since this was meant to be a beginner project, I timeboxed (and compute boxed) myself and decided to wrap it up as is. 
+
+### Background
+- [Grokking paper](https://www.alignmentforum.org/posts/4v3hMuKfsGatLXPgt/investigating-the-learning-coefficient-of-modular-addition)
+- [LLC / devinterp](https://arxiv.org/abs/2308.12108)
+- [Pizza and Clock paper](https://arxiv.org/abs/2306.17844)
+
+In this notebook we investigate how the local learning coefficient (LLC) evolves after grokking modular arithmetic for different architectures (Transformer, MLP, Const Attention).
+
+The authors of https://arxiv.org/pdf/2306.17844 have found that models can learn different algorithms to perform modular arithmetic, and it is an open question on how the LLC is impacted by them.
+
+### Results
+
+- In all 3 model types, the LLC correlates with loss.
+- In the Transformer and Const Attn models, the LLC correlated with changes in algorithm metrics.
+- In the Transformer and Const Attn models, the LLC reached minimums of approximately 39 and 49 at checkpoints 73 and 75 respectively
+- When trained long enough, the Transformer and Const Attn models appear to undergo a second phase change, post-grokking, where the LLC rises. Both models final LLCs were similar at approximately 115 and 117.
+- For transformer models the LLC decreased if we lowered parameter count or disabled positional encoding. Between similarly sized constAttn vs regular transformer, LLC variance seems low.
+- I likely overtrained the MLP and picked poor hyperparameters for SGLD. My LLC estimate on the MLP model is near 0, which is almost certainly inaccurate. (The [reference](https://github.com/timaeus-research/devinterp/blob/main/examples/grokking.ipynb) finds it is closer to 23).
+
+#### Model Structures
+
+3 models are trained to perform modular arithmetic: The models are specifically trained to learn the operation `(a+b) % p`, where `a,b` are inputs, and `p` is fixed (in this notebook, `p=59`)
+
+1. A single layer transformer with learned positional encodings and constant attention. Corresponds to `ModelA` in Pizza/Clock.
+2. A single layer transformer with learned positional encodings. Corresponds to `ModelB` in Pizza/Clock.
+3. A single layer MLP.
+
+#### The Local Learning Coefficient (LLC)
+
+The LLC arises from the field of singular learning theory and serves as a general metric of "model complexity" in a neural network.
+
+The [formal definition of the LLC](https://arxiv.org/abs/2308.12108) is quite dense and gets into the realm of algebraic geometry. For our purposes, we can regard the LLC as "lower LLC = less dimensions used by the model".
+
+For most models, the LLC must be estimated, ironically enough, through machine learning techniques such as SGLD.
+
+#### This all seems pretty informal, how could this be turned into something more substantial?
+
+Well, this was a learning project for me to get familiar with the ecosystem. But if I had to continue:
+
+1. Fix code quality: There's a lot missing. No checkpointing currently, ablation code is unpolished, SGLD hyperparameters could be better, ablation could be parallelized, everything could be logged and exported rather than just kept floating in a run notebook.
+2. Implement full analysis from Pizza/Clock: Currently I'm just placing my faith in the 2 core algorithm metrics. There's a lot more that Pizza/Clock did.
+3. Perform *many* more ablations on ConstAttn vs Regular Transformer. If there is some pattern in how LLC varies across model types, it should be durable through ablations, provided that the algorithms learned remain similar.
