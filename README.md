@@ -20,9 +20,9 @@ The authors of https://arxiv.org/pdf/2306.17844 have found that models can learn
 
 #### LLC Estimates (lambdahat) and Loss curves for ModelA (Constant Attention) and ModelB (Regular Transformer):
 
-<img width="604" height="455" alt="ModelA Const Attn Transformer curves" src="https://github.com/user-attachments/assets/fdb605b4-24c2-44fd-9952-cdc9aac70520" />
+![LLC Estimates And Loss For Const Attn](plots/model_a_llc_vs_loss.png)
 
-<img width="591" height="455" alt="ModelB Regular Transformer curves" src="https://github.com/user-attachments/assets/124e4e93-431b-4d91-a0a5-8e7c8683166e" />
+![LLC Estimates And Loss For Regular Transformer](plots/model_b_llc_vs_loss.png)
 
 ModelA and ModelB learn different algorithms, and in both, LLC drops sharply during initial grokking, and more slowly over extended training until a sharp rise after a very long period of time.
 
