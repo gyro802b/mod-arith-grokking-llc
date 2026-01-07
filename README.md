@@ -1,7 +1,9 @@
 # mod-arith-grokking-llc
 Estimating the Local Learning Coefficient (LLC) across various toy models of modular arithmetic, which learn different algorithms.
 
-First ever DevInterp project! Exploratory project investigating LLC dynamics during grokking. Pretty rough and has a lot that needs ironing out, but this was timeboxed as a learning exercise; future work should extend ablations and improve SGLD hyperparameter tuning.
+First ever DevInterp project! Exploratory project investigating LLC dynamics during grokking. 
+
+Pretty rough and has a lot that needs ironing out, but this was timeboxed as a learning exercise; future work should extend ablations and improve SGLD hyperparameter tuning.
 
 ### Background
 - [Grokking paper](https://www.alignmentforum.org/posts/4v3hMuKfsGatLXPgt/investigating-the-learning-coefficient-of-modular-addition)
@@ -12,14 +14,24 @@ In this notebook we investigate how the local learning coefficient (LLC) evolves
 
 The authors of https://arxiv.org/pdf/2306.17844 have found that models can learn different algorithms to perform modular arithmetic, and it is an open question on how the LLC is impacted by them.
 
-### Results
+### Observations
+
+#### LLC Estimates (lambdahat) and Loss curves for ModelA (Constant Attention) and ModelB (Regular Transformer):
+
+<img width="604" height="455" alt="image" src="https://github.com/user-attachments/assets/fdb605b4-24c2-44fd-9952-cdc9aac70520" />
+
+<img width="591" height="455" alt="image" src="https://github.com/user-attachments/assets/124e4e93-431b-4d91-a0a5-8e7c8683166e" />
+
+ModelA and ModelB learn different algorithms, and in both, LLC drops sharply during initial grokking, and more slowly over extended training until a sharp rise after a very long period of time.
+
+#### Notes
 
 - In all 3 model types, the LLC correlates with loss.
 - In the Transformer and Const Attn models, the LLC correlated with changes in algorithm metrics.
-- In the Transformer and Const Attn models, the LLC reached minimums of approximately 39 and 49 at checkpoints 73 and 75 respectively
-- When trained long enough, the Transformer and Const Attn models appear to undergo a second phase change, post-grokking, where the LLC rises. Both models final LLCs were similar at approximately 115 and 117.
+- In the Transformer and Const Attn models, the LLC reached minimums of approximately 39 and 49 at checkpoints 73 and 75 respectively for this run; Additional seeds should be tested for more confidence in results.
+- When trained long enough, the Transformer and Const Attn models appear to undergo a second phase change, post-grokking, where the LLC rises. Both models final LLCs were similar at approximately 115 and 117; 
 - For transformer models the LLC decreased if we lowered parameter count or disabled positional encoding. Between similarly sized constAttn vs regular transformer, LLC variance seems low.
-- I likely overtrained the MLP and picked poor hyperparameters for SGLD. My LLC estimate on the MLP model is near 0, which is almost certainly inaccurate. (The [reference](https://github.com/timaeus-research/devinterp/blob/main/examples/grokking.ipynb) finds it is closer to 23).
+- MLP was likely overtrained, and hyperparameter selection for SGLD could be improved. My LLC estimate on the MLP model is near 0, which is a strange result. (The [reference](https://github.com/timaeus-research/devinterp/blob/main/examples/grokking.ipynb) finds it is closer to 23, under more grounded training conditions).
 
 #### Model Structures
 
@@ -28,6 +40,7 @@ The authors of https://arxiv.org/pdf/2306.17844 have found that models can learn
 1. A single layer transformer with learned positional encodings and constant attention. Corresponds to `ModelA` in Pizza/Clock.
 2. A single layer transformer with learned positional encodings. Corresponds to `ModelB` in Pizza/Clock.
 3. A single layer MLP.
+
 
 #### The Local Learning Coefficient (LLC)
 
@@ -41,6 +54,6 @@ For most models, the LLC must be estimated, ironically enough, through machine l
 
 Well, this was a learning project for me to get familiar with the ecosystem. But if I had to continue:
 
-1. Fix code quality: There's a lot missing. No checkpointing currently, ablation code is unpolished, SGLD hyperparameters could be better, ablation could be parallelized, everything could be logged and exported rather than just kept floating in a run notebook.
+1. Fix code quality: There's a lot missing. No checkpointing currently, everything packed into a colab notebook, ablation code is unpolished, SGLD hyperparameters could be better, ablation could be parallelized, everything could be logged and exported better.
 2. Implement full analysis from Pizza/Clock: Currently I'm just placing my faith in the 2 core algorithm metrics. There's a lot more that Pizza/Clock did.
 3. Perform *many* more ablations on ConstAttn vs Regular Transformer. If there is some pattern in how LLC varies across model types, it should be durable through ablations, provided that the algorithms learned remain similar.
