@@ -1,51 +1,102 @@
-# Modular Arithmetic Pizza/Clock Exploration
+# Modular Arithmetic Grokking: LLC Estimation Across Architectures
 
-Short timeboxed exploratory prototype: estimate the Local Learning Coefficient (LLC, λ̂) during grokking on modular addition across small architectures (Transformer / ConstAttn / MLP), which may learn different algorithms.
+A technical exploration applying Local Learning Coefficient (LLC) estimation to the grokking phenomenon in modular arithmetic, comparing transformer and MLP architectures.
 
-This is timeboxed as a learning exercise. Future work: more seeds, broader ablations, more data collection, and improved SGLD hyperparameter tuning.
+## What This Is
 
-## Quickstart
-- [Main LLC inspection notebook](Modular_Arithmetic_Grokking_LLC_inspection.ipynb)
-- [Additional ablations](Modular_Arithmetic_Grokking_Ablations.ipynb)
+This is a **learning project** exploring the intersection of Singular Learning Theory and neural network generalization. I implemented LLC estimation using the [devinterp](https://github.com/timaeus-research/devinterp) library and replicated the architectural setup from [The Clock and the Pizza](https://arxiv.org/abs/2306.17844) paper.
 
-## Background / references
-- Learning coefficient of modular addition: https://www.alignmentforum.org/posts/4v3hMuKfsGatLXPgt/investigating-the-learning-coefficient-of-modular-addition
-- LLC / DevInterp: https://arxiv.org/abs/2308.12108
-- Pizza & Clock: https://arxiv.org/abs/2306.17844
+**Scope**: Single-seed exploration with one run per architecture. This is not a rigorous study and the goal was to build implementation familiarity and intuition for these techniques.
 
-## Scope
-We train three models on modular addition: `(a + b) % p` with fixed modulus `p=59`.
+## Background
 
-Models:
-1. 1-layer Transformer with learned positional encodings + constant attention (Pizza/Clock `ModelA`)
-2. 1-layer Transformer with learned positional encodings (Pizza/Clock `ModelB`)
-3. 1-layer MLP baseline
+**Grokking** is a phenomenon where neural networks suddenly generalize long after memorizing training data. [Power et al. (2022)](https://arxiv.org/abs/2201.02177) first observed this on modular arithmetic tasks.
 
-The main notebook runs a single training run per model with a fixed seed for reproducibility. The ablations notebook explores additional seeds / hyperparameters.
+**The Local Learning Coefficient (LLC)** from Singular Learning Theory provides a geometry aware measure of model complexity. Unlike parameter counts, LLC captures the effective dimensionality of the loss landscape near a solution. See [Lau et al. (2023)](https://arxiv.org/abs/2308.12108) for the formal treatment.
 
-## Observations
-Single-seed observations unless noted; ablations suggest some trends persist across runs.
+**Clock vs Pizza**: [Zhong et al. (2023)](https://arxiv.org/abs/2306.17844) showed that different architectures learn different algorithms for modular addition. Transformers tend to learn "Clock" (Fourier-based) while MLPs learn "Pizza" (slice-based) algorithms, distinguishable via gradient symmetry and distance irrelevance metrics.
 
-### LLC estimate (λ̂) and loss during training
-**ModelA (ConstAttn)**
-![LLC Estimates And Loss For Const Attn](plots/model_a_llc_vs_loss.png)
+## What I Implemented
 
-**ModelB (Transformer)**
-![LLC Estimates And Loss For Regular Transformer](plots/model_b_llc_vs_loss.png)
+- **Three model architectures** for modular addition `(a + b) % p`:
+  - `Transformer`: Single-layer with learned positional encodings (expected: Clock algorithm)
+  - `ConstAttn Transformer`: Constant attention variant (expected: Pizza algorithm)
+  - `MLP`: Single hidden layer baseline
 
-In these runs, λ̂ drops sharply early in training and continues drifting downward across extended training, with a later-stage rise after long post-grokking training (single seed).
+- **LLC estimation** via SGLD sampling at training checkpoints
 
-### Notes
-- In these runs, λ̂ generally tracks training regime / loss scale.
-- For Transformer and ConstAttn, λ̂ changes appear to coincide with shifts in algorithm metrics (per Pizza/Clock-style metrics), though this needs multi-seed confirmation.
-- Example single-seed minima: ~39 (ModelA) and ~49 (ModelB) near checkpoints ~73–75.
-- In long training runs, both Transformer and ConstAttn show a later-stage increase; example final values were ~115–117 (single seed).
-- MLP: LLC estimate appears unreliable under current training/SGLD settings (near 0). I don’t use it for conclusions; the devinterp grokking example reports ~23 under different training conditions: https://github.com/timaeus-research/devinterp/blob/main/examples/grokking.ipynb
+- **Algorithm detection metrics** from the Pizza/Clock paper:
+  - Gradient Symmetry
+  - Distance Irrelevance
 
-## What is the LLC?
-The LLC comes from singular learning theory and can be interpreted (informally) as a measure of effective model complexity. Exact definitions are technical; here λ̂ is an estimate obtained via SGLD (see DevInterp paper above).
+- **Training infrastructure**: Checkpointing, metric logging, visualization
 
-## Future work
-- Engineering follow-ups: checkpointing, refactor common code into `src/`, improve logging/export, and make ablations easier to run.
-- Implement more of the Pizza/Clock analysis beyond the two core algorithm metrics.
-- Run broader ablations (especially ConstAttn vs Transformer) and report multi-seed confidence intervals.
+## Repository Structure
+
+```
+├── Modular_Arithmetic_Grokking_LLC_inspection.ipynb  # Main experiment notebook
+├── plots/                                             # Generated visualizations
+│   ├── model_a_llc_vs_loss.png
+│   ├── model_b_llc_vs_loss.png
+│   └── ...
+└── README.md
+```
+
+## Sample Results
+
+Results from a single run (not statistically validated):
+
+| Model | Final Test Acc | Grokking Step | Post-Grok LLC |
+|-------|---------------|---------------|---------------|
+| ConstAttn (A) | ~100% | ~5000 | TBD |
+| Transformer (B) | ~100% | ~3000 | TBD |
+| MLP | ~100% | ~8000 | TBD |
+
+See `plots/` for LLC evolution curves.
+
+## Running the Notebook
+
+```bash
+# Requires GPU runtime (Colab T4 works)
+pip install devinterp torch matplotlib pandas tqdm
+```
+
+Open in [Google Colab](https://colab.research.google.com/github/gyro802b/mod-arith-grokking-llc/blob/main/Modular_Arithmetic_Grokking_LLC_inspection.ipynb) and run all cells. Full training + LLC estimation takes a few hours minutes on a T4 (~45 minutes per model)
+
+## Experiment Configuration
+
+```python
+# Training
+p = 59                    # Modulus
+train_frac = 0.6          # Train/test split
+n_batches = 25000         # Full-batch training steps
+lr = 0.001                # Learning rate (0.01 for MLP)
+weight_decay = 2.0        # AdamW regularization
+
+# LLC Estimation (per checkpoint)
+num_draws = 500           # SGLD samples
+num_burnin_steps = 2000   # Burn-in before sampling
+gamma = 100               # Localization strength
+```
+
+Parameters follow the Pizza/Clock paper where applicable.
+
+## Limitations
+
+- **Single seed**: Results may not be representative. Proper validation would require 3-5+ seeds with confidence intervals.
+- **No determinism guarantees**: DataLoader shuffling and CUDA operations introduce non-determinism across environments.
+- **LLC estimation variance**: SGLD-based estimation has inherent noise; more chains/draws would improve reliability.
+
+## What I Would Do With More Compute
+
+1. Run 5 seeds per architecture with error bars on all metrics
+2. Sweep LLC estimation hyperparameters (gamma, learning rate, num_draws)
+3. Add positional encoding ablations to isolate Clock/Pizza algorithm emergence
+4. Track LLC evolution at finer granularity around the grokking transition
+
+## References
+
+- [Power et al. (2022)](https://arxiv.org/abs/2201.02177) - Grokking: Generalization Beyond Overfitting
+- [Zhong et al. (2023)](https://arxiv.org/abs/2306.17844) - The Clock and the Pizza
+- [Lau et al. (2023)](https://arxiv.org/abs/2308.12108) - Quantifying Degeneracy in Singular Models via the Learning Coefficient
+- [devinterp library](https://github.com/timaeus-research/devinterp) - LLC estimation toolkit
