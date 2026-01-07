@@ -45,7 +45,11 @@ This is a **learning project** exploring the intersection of Singular Learning T
 
 ## Observations
 
-All three architectures grok early (within the first few thousand steps). LLC doesn't settle to a stable value post-grokking—it continues to drift, so I tracked minimums rather than finals. The plots show LLC vs loss over training; I wouldn't read too much into the specific values given the single-seed setup.
+*Example training run (Transformer):*
+
+![LLC vs Loss for Transformer](plots/model_b_llc_vs_loss.png)
+
+All three architectures grok early (within the first few thousand steps). LLC doesn't settle to a stable value post-grokking. It continues to drift, so I tracked minimums alongside final results. I wouldn't read too much into the specific values given the single-seed setup.
 
 The algorithm metrics (gradient symmetry, distance irrelevance) do differentiate the architectures as expected from the Pizza/Clock paper.
 
