@@ -1,7 +1,7 @@
 # mod-arith-grokking-llc
 Estimating the Local Learning Coefficient (LLC) across various toy models of modular arithmetic, which learn different algorithms.
 
-First ever DevInterp project! It's pretty rough around the edges, would need a lot of ironing out to be a serious experiment. There's a lot left unfinished but since this was meant to be a beginner project, I timeboxed (and compute boxed) myself and decided to wrap it up as is. 
+First ever DevInterp project! Exploratory project investigating LLC dynamics during grokking. Pretty rough and has a lot that needs ironing out, but this was timeboxed as a learning exercise; future work should extend ablations and improve SGLD hyperparameter tuning.
 
 ### Background
 - [Grokking paper](https://www.alignmentforum.org/posts/4v3hMuKfsGatLXPgt/investigating-the-learning-coefficient-of-modular-addition)
