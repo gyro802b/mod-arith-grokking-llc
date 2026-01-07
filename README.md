@@ -14,7 +14,7 @@ This is a **learning project** exploring the intersection of Singular Learning T
 
 **The Local Learning Coefficient (LLC)** from Singular Learning Theory provides a geometry-aware measure of model complexity. Unlike parameter counts, LLC captures the effective dimensionality of the loss landscape near a solution. See [Lau et al. (2023)](https://arxiv.org/abs/2308.12108) for the formal treatment.
 
-**Clock vs Pizza**: [Zhong et al. (2023)](https://arxiv.org/abs/2306.17844) showed that different architectures learn different algorithms for modular addition. Transformers tend to learn "Clock" (Fourier-based) while MLPs learn "Pizza" (slice-based) algorithms, distinguishable via gradient symmetry and distance irrelevance metrics.
+**Clock vs Pizza**: [Zhong et al. (2023)](https://arxiv.org/abs/2306.17844) showed that different architectures learn different algorithms for modular addition. Regular Transformers tend to learn "Clock" (Fourier-based) while Transformers with their attention mechanism ablated tend to learn "Pizza" (slice-based) algorithms, distinguishable via gradient symmetry and distance irrelevance metrics.
 
 ## What I Implemented
 
