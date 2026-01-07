@@ -1,6 +1,6 @@
 # Modular Arithmetic Grokking: LLC Estimation Across Architectures
 
-A technical exploration applying Local Learning Coefficient (LLC) estimation to the grokking phenomenon in modular arithmetic, comparing transformer and MLP architectures.
+A technical exploration applying Local Learning Coefficient (LLC) estimation to the grokking phenomenon in modular arithmetic, comparing behavior between a Constant Attention and Transformer model.
 
 ## What This Is
 
@@ -36,7 +36,7 @@ This is a **learning project** exploring the intersection of Singular Learning T
 ```
 ├── Modular_Arithmetic_Grokking_LLC_inspection.ipynb  # Main experiment notebook
 ├── Modular_Arithmetic_Grokking_Ablations.ipynb       # Ablation experiment notebook
-├── plots/                                             # Generated visualizations
+├── plots/                                            # Generated visualizations
 │   ├── model_a_llc_vs_loss.png
 │   ├── model_b_llc_vs_loss.png
 │   └── ...
