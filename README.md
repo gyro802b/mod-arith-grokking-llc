@@ -1,11 +1,13 @@
-# mod-arith-grokking-llc
-Estimating the Local Learning Coefficient (LLC) across various toy models of modular arithmetic, which learn different algorithms.
+# Modular Arithmetic Pizza/Clock Exploration
 
-First ever DevInterp project! Exploratory project investigating LLC dynamics during grokking. 
+An exploratory project for estimating the Local Learning Coefficient (LLC) across various toy models of modular arithmetic, which learn different algorithms.
 
-Pretty rough and has a lot that needs ironing out, but this was timeboxed as a learning exercise; future work should extend ablations and improve SGLD hyperparameter tuning.
+First ever DevInterp project! Exploratory project investigating LLC dynamics during grokking of different model types
+
+Pretty rough, but was timeboxed as a learning exercise; future work should extend ablations, test on more seeds, and improve SGLD hyperparameter tuning.
 
 ### Background
+
 - [Grokking paper](https://www.alignmentforum.org/posts/4v3hMuKfsGatLXPgt/investigating-the-learning-coefficient-of-modular-addition)
 - [LLC / devinterp](https://arxiv.org/abs/2308.12108)
 - [Pizza and Clock paper](https://arxiv.org/abs/2306.17844)
@@ -18,9 +20,9 @@ The authors of https://arxiv.org/pdf/2306.17844 have found that models can learn
 
 #### LLC Estimates (lambdahat) and Loss curves for ModelA (Constant Attention) and ModelB (Regular Transformer):
 
-<img width="604" height="455" alt="image" src="https://github.com/user-attachments/assets/fdb605b4-24c2-44fd-9952-cdc9aac70520" />
+<img width="604" height="455" alt="ModelA Const Attn Transformer curves" src="https://github.com/user-attachments/assets/fdb605b4-24c2-44fd-9952-cdc9aac70520" />
 
-<img width="591" height="455" alt="image" src="https://github.com/user-attachments/assets/124e4e93-431b-4d91-a0a5-8e7c8683166e" />
+<img width="591" height="455" alt="ModelB Regular Transformer curves" src="https://github.com/user-attachments/assets/124e4e93-431b-4d91-a0a5-8e7c8683166e" />
 
 ModelA and ModelB learn different algorithms, and in both, LLC drops sharply during initial grokking, and more slowly over extended training until a sharp rise after a very long period of time.
 
