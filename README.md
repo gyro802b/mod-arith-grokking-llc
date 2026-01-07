@@ -6,7 +6,7 @@ A technical exploration applying Local Learning Coefficient (LLC) estimation to 
 
 This is a **learning project** exploring the intersection of Singular Learning Theory and neural network generalization. I implemented LLC estimation using the [devinterp](https://github.com/timaeus-research/devinterp) library and replicated the architectural setup from [The Clock and the Pizza](https://arxiv.org/abs/2306.17844) paper.
 
-**Scope**: Single-seed exploration with one run per architecture. This is not a rigorous study and the goal was to build implementation familiarity and intuition for these techniques.
+**Scope**: Single-seed exploration with one run per architecture. This is not a rigorous study and the goal was to build implementation familiarity and intuition for these techniques. As a learning project this was timeboxed and compute boxed to my T4 Colab credits.
 
 ## Background
 
@@ -35,6 +35,7 @@ This is a **learning project** exploring the intersection of Singular Learning T
 
 ```
 ├── Modular_Arithmetic_Grokking_LLC_inspection.ipynb  # Main experiment notebook
+├── Modular_Arithmetic_Grokking_Ablations.ipynb       # Ablation experiment notebook
 ├── plots/                                             # Generated visualizations
 │   ├── model_a_llc_vs_loss.png
 │   ├── model_b_llc_vs_loss.png
@@ -42,17 +43,11 @@ This is a **learning project** exploring the intersection of Singular Learning T
 └── README.md
 ```
 
-## Sample Results
+## Observations
 
-Results from a single run (not statistically validated):
+All three architectures grok early (within the first few thousand steps). LLC doesn't settle to a stable value post-grokking—it continues to drift, so I tracked minimums rather than finals. The plots show LLC vs loss over training; I wouldn't read too much into the specific values given the single-seed setup.
 
-| Model | Final Test Acc | Grokking Step | Post-Grok LLC |
-|-------|---------------|---------------|---------------|
-| ConstAttn (A) | ~100% | ~5000 | TBD |
-| Transformer (B) | ~100% | ~3000 | TBD |
-| MLP | ~100% | ~8000 | TBD |
-
-See `plots/` for LLC evolution curves.
+The algorithm metrics (gradient symmetry, distance irrelevance) do differentiate the architectures as expected from the Pizza/Clock paper.
 
 ## Running the Notebook
 
@@ -84,7 +79,7 @@ Parameters follow the Pizza/Clock paper where applicable.
 ## Limitations
 
 - **Single seed**: Results may not be representative. Proper validation would require 3-5+ seeds with confidence intervals.
-- **No determinism guarantees**: DataLoader shuffling and CUDA operations introduce non-determinism across environments.
+- **No determinism guarantees**: DataLoader shuffling and CUDA operations introduce non-determinism across environments. This is less of a problem when performing full-batch training, but for batch size ablations this is a known issue.
 - **LLC estimation variance**: SGLD-based estimation has inherent noise; more chains/draws would improve reliability.
 
 ## What I Would Do With More Compute
